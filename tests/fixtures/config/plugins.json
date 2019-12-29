@@ -1,0 +1,7 @@
+{ "@midgar/service": {
+  "enabled": true,
+  "path": "../../.."
+}, 
+  "test-plugin": true,
+  "test-plugin-2": true
+}
