@@ -10,6 +10,13 @@ Système de services avec injection de dépendance pour [Midgar](https://www.npm
 $ npm i @midgar/service --save
 ```
 
+Si tout s'est bien passé, un message de confirmation s'affiche:
+```
+#midgar-cli
+@midgar/controller added to plugins.js !
+```
+
+
 ## Fonctionnement
 Ajoute un dossier de plugin midgar-services: ./services/
 Les services sont chargés a l'appel de l'évènement @midgar/midgar:afterLoadPlugins
