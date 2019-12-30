@@ -11,8 +11,9 @@ $ npm i @midgar/service --save
 ```
 
 ## Fonctionnement
-Ajoute un dossier de plugin midgar-services: ./services/
-Les services sont chargés a l'appel de l'évènement @midgar/midgar:afterLoadPlugins
+Ajoute un dossier de plugin **midgar-services**: ./services/.
+
+Les services sont chargés a l'appel de l'évènement **@midgar/midgar:afterLoadPlugins**
 
 ## Get service
 
@@ -23,14 +24,11 @@ const serviceInstance = await mid.getService('myService')
 ## Service définition
 Exemple de fichier service
 
-Function:
+### Function:
 
 ```js
-/**
- * Function
- */
-function 
 export default {
+  // Service a injecter
   dependencies: [
     'db'
   ],
@@ -40,16 +38,26 @@ export default {
 }
 ```
 
+### Class:
 ```js
+// Service a injecter
+const dependencies: [
+    'db'
+  ]
+
 /**
  * Class
  */
+class MyService {
+  constructor(mid, db) {}
+
+  init () {
+    ...
+  }
+}
+
 export default {
-  dependencies: [
-    'db'
-  ]
-  service: class MyService {
-    constructor(mid, db) {}
-  },
+  dependencies,
+  service: MyService,
 }
 ```
