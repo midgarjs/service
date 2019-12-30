@@ -1,4 +1,4 @@
-![](https://ci.midgar.io/app/rest/builds/buildType:(id:Midgar_Service_Build)/statusIcon) [![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar_Service&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar_Services)
+![](https://ci.midgar.io/app/rest/builds/buildType:(id:Midgar_Service_Build)/statusIcon) [![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar_Service&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar_Service)
 
 ## @midgar/service
 
@@ -8,6 +8,12 @@ Système de services avec injection de dépendance pour [Midgar](https://www.npm
 
 ```sh
 $ npm i @midgar/service --save
+```
+Si tout s'est bien passé, un message de confirmation s'affiche:
+
+```sh
+#midgar-cli
+@midgar/controller added to plugins.js !
 ```
 
 ## Fonctionnement

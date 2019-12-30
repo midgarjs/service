@@ -155,7 +155,7 @@ class ServicePlugin extends Plugin {
     const names = {}
 
     // Get service files
-    const files = await this.mid.pm.importDir(this.dirKey, null, true)
+    const files = await this.mid.pm.importDir(this.dirKey)
     // List service files
     return utils.asyncMap(files, (file) => {
       const service = file.export
