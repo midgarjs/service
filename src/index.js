@@ -8,14 +8,14 @@ export const DIR_KEY = 'midgar-services'
  * @class
  */
 class ServicePlugin extends Plugin {
-  /**
-   * Init plugin
-   */
-  async init () {
-    this.dirKey = DIR_KEY
+  constructor (...args) {
+    super(...args)
 
-    // Add services plugin dir
-    this.pm.addPluginDir(this.dirKey, 'services')
+    /**
+     * Services dir key
+     * @type {String}
+     */
+    this.dirKey = DIR_KEY
 
     /**
      * Service definition object
@@ -28,6 +28,14 @@ class ServicePlugin extends Plugin {
      * @type {Object}
      */
     this.serviceInstances = {}
+  }
+
+  /**
+   * Init plugin
+   */
+  async init () {
+    // Add services plugin dir
+    this.pm.addPluginDir(this.dirKey, 'services')
 
     // Listen @midgar/midgar:afterInit event
     this.mid.on('@midgar/midgar:afterLoadPlugins', async () => {

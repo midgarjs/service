@@ -17,25 +17,19 @@ Si tout s'est bien passé, un message de confirmation s'affiche:
 @midgar/controller added to plugins.js !
 ```
 
-
 ## Fonctionnement
 Ajoute un dossier de plugin **midgar-services**: ./services/.
 
 Les services sont chargés a l'appel de l'évènement **@midgar/midgar:afterLoadPlugins**
 
-## Get service
-
-```js
-const serviceInstance = await mid.getService('myService')
-```
-
-## Service définition
-Exemple de fichier service
+## Ficher service
 
 ### Function:
 
 ```js
 export default {
+  // Nom du service
+  name: 'namespace:monService',
   // Service a injecter
   dependencies: [
     'db'
@@ -48,14 +42,13 @@ export default {
 
 ### Class:
 ```js
+// Nom du service
+const name = 'namespace:monService'
 // Service a injecter
 const dependencies: [
     'db'
   ]
 
-/**
- * Class
- */
 class MyService {
   constructor(mid, db) {}
 
@@ -65,7 +58,16 @@ class MyService {
 }
 
 export default {
+  name
   dependencies,
   service: MyService,
 }
+```
+
+La methode init est appelé automatique lors de la création de l'instance du service.
+
+## Get service
+
+```js
+const serviceInstance = await mid.getService('namespace:monService')
 ```
