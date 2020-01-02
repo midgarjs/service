@@ -1,19 +1,13 @@
-![](https://ci.midgar.io/app/rest/builds/buildType:(id:Midgar_Service_Build)/statusIcon) [![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar_Service&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar_Service)
+# @midgar/service
+[![Build Status](https://drone.midgar.io/api/badges/Midgar/service/status.svg)](https://drone.midgar.io/Midgar/service)
+[![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar%3Aservice&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar%3Aservice)
 
-## @midgar/service
-
-Système de services avec injection de dépendance pour [Midgar](https://www.npmjs.com/package/@midgar/midgar)
+Système de services avec injection de dépendance pour [Midgar](https://github.com/midgarjs/midgar)
 
 ## Installation
 
 ```sh
 $ npm i @midgar/service --save
-```
-Si tout s'est bien passé, un message de confirmation s'affiche:
-
-```sh
-#midgar-cli
-@midgar/controller added to plugins.js !
 ```
 
 Si tout s'est bien passé, un message de confirmation s'affiche:

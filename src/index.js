@@ -119,7 +119,7 @@ class ServicePlugin extends Plugin {
 
     return this.serviceInstances[name]
   }
-  
+
   /**
    * Create the service instance
    *
@@ -129,6 +129,7 @@ class ServicePlugin extends Plugin {
    * @private
    */
   async _createServiceInstance (name, serviceDef, args) {
+    this.mid.debug(`@midgar/service: create service instance (${name})`)
     if (typeof serviceDef.service === 'function') {
       // If the service is a class
       if (/^class\s/.test(Function.prototype.toString.call(serviceDef.service))) {
@@ -188,9 +189,7 @@ class ServicePlugin extends Plugin {
    * @returns {Object}
    */
   getService (name) {
-    if (!this.serviceInstances[name]) {
-      throw new Error('@midgar/service: Unknow service: ' + name + ' !')
-    }
+    if (!this.serviceInstances[name]) throw new Error('@midgar/service: Unknow service: ' + name + ' !')
     return this.serviceInstances[name]
   }
 }
