@@ -4,7 +4,7 @@ module.exports = {
         "node": true,
         "mocha": true
     },
-    "ignorePatterns": ["docs"],
+    "ignorePatterns": ["docs/**/*"],
     "extends": [
         "standard",
         "eslint:recommended",
