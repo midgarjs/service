@@ -1,6 +1,7 @@
-# @midgar/service
 [![Build Status](https://drone.midgar.io/api/badges/Midgar/service/status.svg)](https://drone.midgar.io/Midgar/service)
 [![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar%3Aservice&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar%3Aservice)
+
+# @midgar/service
 
 Système de services avec injection de dépendance pour [Midgar](https://github.com/midgarjs/midgar)
 
