@@ -133,10 +133,10 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@midgar/midgar@^1.0.0-alpha.2.3":
-  version "1.0.0-alpha.2.3"
-  resolved "https://registry.yarnpkg.com/@midgar/midgar/-/midgar-1.0.0-alpha.2.3.tgz#d6eafeea6b26ba09a273bd85ddfedde68a210e37"
-  integrity sha512-crcpkW5P9niS22rA2lpamXll9zq3NSbPvS2YuQL6t05JewFKyEoH+nIhFp5sq+FeeG/oGhCuupj33bjjVI2p3A==
+"@midgar/midgar@^1.0.0-alpha.2.5":
+  version "1.0.0-alpha.2.5"
+  resolved "https://registry.yarnpkg.com/@midgar/midgar/-/midgar-1.0.0-alpha.2.5.tgz#fa7045ecbac02984c989b7391588438fb035a54e"
+  integrity sha512-RoDyo97Ki9FC0yqPh0dmfUCUksvF6n3LcNTYSlKsz0Gv35jnxFYsjySspQUAJdCm8oNUqE+iBZEfh4AwTa2Gtw==
   dependencies:
     "@midgar/utils" "^1.0.0-alpha.1.5"
     body-parser "^1.19.0"
@@ -147,7 +147,6 @@
     express "^4.17.1"
     figlet "^1.2.4"
     helmet "^3.21.2"
-    mkdirp "^0.5.1"
     mocha-junit-reporter "^1.23.1"
     rimraf "^3.0.0"
     save "^2.4.0"
