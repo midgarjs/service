@@ -5,7 +5,7 @@
 export default {
   name: 'depend',
   dependencies: [
-    'test',
+    'test-plugin:test',
     'test2'
   ],
   service: class TestDependService {

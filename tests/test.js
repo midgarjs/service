@@ -51,15 +51,19 @@ describe('Service', function () {
   it('getService', async () => {
     expect(mid.getService).be.a('function', 'mid.getService is not a function')
 
-    const _testService = await mid.getService('test')
+    const _testService = mid.getService('test-plugin:test')
     expect(_testService).to.be.an.instanceof(testService.service, 'testService is not an instance of TestService')
+
+    // Test error
+    const name = 'notexists'
+    expect(() => mid.getService(name)).to.throw(Error, `@midgar/service: Unknow service: ${name} !`)
   })
 
   /**
    * Test if the service is init
    */
   it('is init', async () => {
-    const _testService = await mid.getService('test')
+    const _testService = mid.getService('test-plugin:test')
     expect(_testService.isInit).equal(true, 'TestService is not init !')
   })
 
@@ -67,15 +71,15 @@ describe('Service', function () {
    * Test if the named service have the good name
    */
   it('named service', async () => {
-    const _testService2 = await mid.getService('test2')
+    const _testService2 = mid.getService('test2')
     expect(_testService2).to.be.an.instanceof(namedService.service, 'namedService is not an instance of NamedService')
   })
 
-    /**
+  /**
    * Test if the named service have the good name
    */
   it('depend service', async () => {
-    const dependService = await mid.getService('depend')
+    const dependService = mid.getService('depend')
     expect(dependService.testService).to.be.an.instanceof(testService.service, 'testService is not an instance of TestService')
     expect(dependService.test2Service).to.be.an.instanceof(namedService.service, 'test2Service is not an instance of NamedService')
   })

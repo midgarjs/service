@@ -69,5 +69,5 @@ La methode init est appelé automatique lors de la création de l'instance du se
 ## Get service
 
 ```js
-const serviceInstance = await mid.getService('namespace:monService')
+const serviceInstance = mid.getService('namespace:monService')
 ```
