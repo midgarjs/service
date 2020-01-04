@@ -17,6 +17,7 @@ class ServicePlugin extends Plugin {
      */
     this.dirKey = DIR_KEY
 
+    this._invalidDependendies = {}
     /**
      * Service instance object
      * @type {Object}
@@ -148,16 +149,19 @@ class ServicePlugin extends Plugin {
    * @return {Any}
    * @private
    */
-  async _initService (name, serviceDefs, beforeServices) {
+  async _initService (name, serviceDefs, beforeServices, invalidDependencies = {}) {
     // This method can be called multiple time for same service
     if (!this._services[name]) {
       // Args for the service instance
       if (beforeServices[name]) {
-        for (const beforeService of beforeServices) {
+        for (const beforeService of beforeServices[name]) {
+          if (serviceDefs[beforeService] === name) throw new Error(`@midgar/service: Invalid before service (${serviceDefs[beforeService]}) in service (${name}) !`)
           if (!serviceDefs[beforeService]) throw new Error(`@midgar/service: Unknow before service (${beforeService}) in service (${name}) !`)
-          await this._initService(beforeService, serviceDefs, beforeServices)
+          invalidDependencies[name] = serviceDefs[beforeService]
+          await this._initService(beforeService, serviceDefs, beforeServices, invalidDependencies)
         }
       }
+
       const args = [
         this.mid
       ]
@@ -168,7 +172,13 @@ class ServicePlugin extends Plugin {
       if (serviceDef.dependencies && serviceDef.dependencies.length) {
         for (const dependency of serviceDef.dependencies) {
           if (!serviceDefs[dependency]) throw new Error(`@midgar/service: Unknow service dependency (${dependency}) in service (${name}) !`)
-          await this._initService(dependency, serviceDefs, beforeServices)
+
+          if (dependency === name) throw new Error(`@midgar/service: Invalid service dependency (${dependency}) in service (${name}) !`)
+          if (dependency === name) throw new Error(`@midgar/service: Invalid service dependency (${dependency}) in service (${name}) !`)
+          if (invalidDependencies[dependency] !== undefined) throw new Error(`@midgar/service: Invalid service dependency (${dependency}) in service (${name}), ${invalidDependencies[dependency]} already depend on ${dependency} !`)
+
+          invalidDependencies[dependency] = name
+          await this._initService(dependency, serviceDefs, beforeServices, invalidDependencies)
           args.push(this.getService(dependency))
         }
       }

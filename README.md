@@ -12,9 +12,9 @@ $ npm i @midgar/service --save
 ```
 
 Si tout s'est bien passé, un message de confirmation s'affiche:
-```
+```sh
 #midgar-cli
-@midgar/controller added to plugins.js !
+@midgar/express added to plugins.js !
 ```
 
 ## Fonctionnement
