@@ -37,6 +37,13 @@
 				</ul>
 			</li>
 			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#event:@midgar/service:afterLoad">event:@midgar/service:afterLoad</a></li>
+				</ul>
+			</li>
+			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -175,79 +182,8 @@
         <dl>
             
 <hr>
-<dt class="name" id="servicedefs">
-    <h4 id="servicedefs"><span class="type-signature"></span>servicedefs<span class="type-signature"> :Object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Service definition object
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="serviceInstances">
-    <h4 id="serviceInstances"><span class="type-signature"></span>serviceInstances<span class="type-signature"> :Object</span></h4>
+<dt class="name" id="_services">
+    <h4 id="_services"><span class="type-signature"></span>_services<span class="type-signature"> :Object</span></h4>
 
     
 </dt>
@@ -314,6 +250,77 @@
     
 </dd>
 
+        
+            
+<hr>
+<dt class="name" id="dirKey">
+    <h4 id="dirKey"><span class="type-signature"></span>dirKey<span class="type-signature"> :String</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Services dir key
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
         </dl>
     
 
@@ -324,7 +331,159 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="_getServices"><span class="type-signature">&lt;async> </span>_getServices()</h4>
+    <h4 class="name" id="_checkServiceDef"><span class="type-signature"></span>_checkServiceDef(serviceDef, file)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check service Object def
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>serviceDef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Obejct</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Service Object definition</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>file</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Object file from pm.importDir</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_getServiceDefs"><span class="type-signature">&lt;async> </span>_getServiceDefs()</h4>
     
     
 </dt>
@@ -414,6 +573,176 @@
 
 
         
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_proccessBeforeDef"><span class="type-signature"></span>_proccessBeforeDef(serviceDef, beforeServices, file)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check in service def if before services exist and map them
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>serviceDef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Obejct</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Service Object definition</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>beforeServices</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Store service before index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>file</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Object file from pm.importDir</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -570,7 +899,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="init"><span class="type-signature">&lt;async> </span>init()</h4>
+    <h4 class="name" id="init"><span class="type-signature"></span>init()</h4>
     
     
 </dt>
@@ -694,7 +1023,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2020-01-02T13:35:37+00:00
+		on 2020-01-04T23:44:51+00:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

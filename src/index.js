@@ -59,6 +59,12 @@ class ServicePlugin extends Plugin {
         this.mid.error(error)
       }
     }
+
+    /**
+     * afterLoad event.
+     * @event @midgar/service:afterLoad
+     */
+    await this.mid.emit('@midgar/service:afterLoad')
   }
 
   /**
@@ -71,7 +77,6 @@ class ServicePlugin extends Plugin {
 
     // Get service files
     const files = await this.mid.pm.importDir(this.dirKey)
-
     // List service files
     for (const file of files) {
       const serviceDef = file.export
