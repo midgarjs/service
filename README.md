@@ -30,11 +30,13 @@ Les services sont chargés a l'appel de l'évènement **@midgar/midgar:afterLoad
 export default {
   // Nom du service
   name: 'namespace:monService',
+  // Le service s'initialiseras avant le service mid:express
+  before: ['mid:express']
   // Service a injecter
   dependencies: [
-    'db'
+    'mid:mongo'
   ],
-  service: (mid, db) => {
+  service: (mid, mongoService) => {
   ...
   }
 }
@@ -44,13 +46,15 @@ export default {
 ```js
 // Nom du service
 const name = 'namespace:monService'
+// Le service s'initialiseras avant le service mid:express
+const before = ['mid:express']
 // Service a injecter
 const dependencies: [
-    'db'
+    'mid:mongo'
   ]
 
 class MyService {
-  constructor(mid, db) {}
+  constructor(mid, mongoService) {}
 
   init () {
     ...
@@ -59,6 +63,7 @@ class MyService {
 
 export default {
   name
+  before,
   dependencies,
   service: MyService,
 }
