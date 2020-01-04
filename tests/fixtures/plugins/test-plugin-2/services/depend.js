@@ -1,15 +1,17 @@
 
+const name = 'depend'
 /**
  * Midgar TestDepend service
  */
 export default {
-  name: 'depend',
+  name,
   dependencies: [
     'test-plugin:test',
     'test2'
   ],
   service: class TestDependService {
-    constructor(mid, testService, test2Service) {
+    constructor (mid, testService, test2Service) {
+      testService.services.push(name)
       this.mid = mid
       this.testService = testService
       this.test2Service = test2Service
@@ -18,7 +20,6 @@ export default {
     /**
      * Int service
      */
-    async init() {
-    }
+    async init () {}
   }
 }

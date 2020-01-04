@@ -155,19 +155,19 @@ class ServicePlugin extends Plugin {
    */
   async _initService (name, serviceDefs, beforeServices, invalidDependencies = {}) {
     // This method can be called multiple time for same service
-    if (!this._services[name]) {
-      await this._initBeforeServices(name, serviceDefs, beforeServices, invalidDependencies)
+    if (this._services[name]) return
+    await this._initBeforeServices(name, serviceDefs, beforeServices, invalidDependencies)
 
-      const args = [
-        this.mid
-      ]
+    const args = [
+      this.mid
+    ]
 
-      const services = await this._initDependenciesServices(name, serviceDefs, beforeServices, invalidDependencies)
-      args.push(...services)
+    const services = await this._initDependenciesServices(name, serviceDefs, beforeServices, invalidDependencies)
+    args.push(...services)
 
-      // Create service instance
-      await this._createInstance(name, serviceDefs[name], args)
-    }
+    if (this._services[name]) return
+    // Create service instance
+    await this._createInstance(name, serviceDefs[name], args)
   }
 
   /**
@@ -188,7 +188,7 @@ class ServicePlugin extends Plugin {
         if (!serviceDefs[beforeService]) throw new Error(`@midgar/service: Unknow before service (${beforeService}) in service (${name}) !`)
 
         // Flag this service to protect from circular dependency
-        invalidDependencies[name] = serviceDefs[beforeService]
+        invalidDependencies[beforeService] = serviceDefs[name]
 
         // Create service instance
         return this._initService(beforeService, serviceDefs, beforeServices, invalidDependencies)
@@ -220,7 +220,7 @@ class ServicePlugin extends Plugin {
         if (dependency === name) throw new Error(`@midgar/service: Invalid service dependency (${dependency}) in service (${name}) !`)
         if (invalidDependencies[dependency] !== undefined) throw new Error(`@midgar/service: Invalid service dependency (${dependency}) in service (${name}), ${invalidDependencies[dependency]} already depend on ${dependency} !`)
 
-        invalidDependencies[dependency] = name
+        invalidDependencies[name] = dependency
         await this._initService(dependency, serviceDefs, beforeServices, invalidDependencies)
         return this.getService(dependency)
       })
@@ -238,7 +238,7 @@ class ServicePlugin extends Plugin {
    * @private
    */
   async _createInstance (name, serviceDef, args) {
-    this.mid.debug(`@midgar/service: create service instance (${name})`)
+    this.mid.debug(`@midgar/service: Create service instance ${name}.`)
     if (typeof serviceDef.service === 'function') {
       // If the service is a class
       if (/^class\s/.test(Function.prototype.toString.call(serviceDef.service))) {

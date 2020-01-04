@@ -3,15 +3,16 @@
  * Midgar Test service
  */
 class TestService {
-  constructor(midgar) {
-    this.midgar = midgar
+  constructor (mid) {
+    this.mid = mid
     this.isInit = false
+    this.services = []
   }
 
   /**
    * Int service
    */
-  async init() {
+  async init () {
     this.isInit = true
   }
 }

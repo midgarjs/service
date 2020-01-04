@@ -39,7 +39,7 @@ describe('Service', function () {
   /**
    * Test if the plugin id load
    */
-  it('plugin is load', async () => {
+  it('Plugin is load', async () => {
     mid = await initMidgar()
     const plugin = mid.pm.getPlugin('@midgar/service')
     expect(plugin).to.be.an.instanceof(ServicePlugin, 'Plugin is not an instance of ServicePlugin')
@@ -63,7 +63,7 @@ describe('Service', function () {
   /**
    * Test if the service is init
    */
-  it('is init', async () => {
+  it('Is init', async () => {
     mid = await initMidgar()
     const _testService = mid.getService('test-plugin:test')
     expect(_testService.isInit).equal(true, 'TestService is not init !')
@@ -72,7 +72,7 @@ describe('Service', function () {
   /**
    * Test if the named service have the good name
    */
-  it('named service', async () => {
+  it('Named service', async () => {
     mid = await initMidgar()
     const _testService2 = mid.getService('test2')
     expect(_testService2).to.be.an.instanceof(namedService.service, 'namedService is not an instance of NamedService')
@@ -81,11 +81,16 @@ describe('Service', function () {
   /**
    * Test if the named service have the good name
    */
-  it('depend service', async () => {
+  it('Dependencies', async () => {
     mid = await initMidgar()
     const dependService = mid.getService('depend')
     expect(dependService.testService).to.be.an.instanceof(testService.service, 'testService is not an instance of TestService')
     expect(dependService.test2Service).to.be.an.instanceof(namedService.service, 'test2Service is not an instance of NamedService')
+
+    const services = mid.getService('test-plugin:test').services
+
+    const shouldResult = ['test-2', 'before-test', 'test-3', 'test-5', 'depend', 'test-4']
+    expect(services).to.be.eql(shouldResult)
   })
 
   it('Circulare dependencies', async () => {
