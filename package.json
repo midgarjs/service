@@ -1,6 +1,6 @@
 {
   "name": "@midgar/service",
-  "version": "1.0.0-alpha.1.6",
+  "version": "1.0.0-alpha.2.0",
   "description": "A Midgar plugin to add service with dependency injection",
   "main": "src/index.js",
   "module": "true",
