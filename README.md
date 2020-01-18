@@ -81,3 +81,5 @@ La methode init est appelé automatique lors de la création de l'instance du se
 ```js
 const serviceInstance = mid.getService('namespace:monService')
 ```
+
+[documentation Api](https://midgarjs.github.io/service/).

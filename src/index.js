@@ -4,10 +4,10 @@ import { asyncMap } from '@midgar/utils'
 export const MODULE_TYPE_KEY = 'midgar-service'
 
 /**
- * @typedef {Object} Service module
+ * @typedef {Object} ServiceModule
  * @property {string}          name         Service name
  * @property {Array<string>}   dependencies Array of depend service
- * @property {Array<string>}   before       Array of service init after this 
+ * @property {Array<string>}   before       Array of service init after this
  * @property {Object|function} service      Service class or function
  */
 
@@ -128,6 +128,7 @@ class ServicePlugin extends Plugin {
    *
    * @param {ServiceModule} serviceModule Service Module
    * @param {ModuleFile}    file          Module file from importModules
+   * @private
    */
   _checkServiceModule (serviceModule, file) {
     if (typeof serviceModule !== 'object') throw new TypeError(`Invalid default export type in module: ${file.path} !`)
@@ -143,6 +144,7 @@ class ServicePlugin extends Plugin {
    * @param {ServiceModule} serviceModule  Service module
    * @param {Object}        beforeServices Store service before index
    * @param {object}        file           Object file from importModules
+   * @private
    */
   _proccessBeforeDef (serviceModule, beforeServices, file) {
     if (serviceModule.before === undefined) return
