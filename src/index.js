@@ -70,10 +70,10 @@ class ServicePlugin extends Plugin {
     }
 
     /**
-     * afterLoad event.
-     * @event @midgar/service:afterLoad
+     * afterInit event.
+     * @event @midgar/service:afterInit
      */
-    await this.mid.emit('@midgar/service:afterLoad')
+    await this.mid.emit('@midgar/service:afterInit')
   }
 
   /**
