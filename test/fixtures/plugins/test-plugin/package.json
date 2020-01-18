@@ -8,7 +8,7 @@
   "repository": {
   },
   "dependencies": {
-    "@midgar/midgar": "^1.0.0-alpha.2.2",
+    "@midgar/midgar": "^1.0.0-alpha.4.1",
     "@midgar/service": "file:../../.."
   },
   "devDependencies": {},

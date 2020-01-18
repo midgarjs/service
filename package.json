@@ -1,6 +1,6 @@
 {
   "name": "@midgar/service",
-  "version": "1.0.0-alpha.2.0",
+  "version": "^1.0.0-alpha.1.6",
   "description": "A Midgar plugin to add service with dependency injection",
   "main": "src/index.js",
   "module": "true",
@@ -19,7 +19,7 @@
     "url": "git+https://github.com/midgarjs/service.git"
   },
   "dependencies": {
-    "@midgar/midgar": "^1.0.0-alpha.4.0",
+    "@midgar/midgar": "^1.0.0-alpha.4.1",
     "@midgar/utils": "^1.0.0-alpha.1.5",
     "uid-safe": "^2.1.5"
   },
