@@ -49,10 +49,12 @@ class ServicePlugin extends Plugin {
 
   /**
    * init plugins services
+   *
+   * @return {Promise<void>}
    * @private
    */
   async _initServices () {
-    this.mid.debug('Load services...')
+    this.mid.debug('@midgar/service: Load services...')
 
     // Get all plugin services
     const { serviceModules, beforeServices } = await this._getServiceModules()
@@ -62,11 +64,11 @@ class ServicePlugin extends Plugin {
     }
 
     for (const name in serviceModules) {
-      try {
+      // try {
         await this._initService(name, serviceModules, beforeServices)
-      } catch (error) {
+      /* } catch (error) {
         this.mid.error(error)
-      }
+      } */
     }
 
     /**
@@ -77,9 +79,9 @@ class ServicePlugin extends Plugin {
   }
 
   /**
-   * Return an object with all plugin services
+   * Return an object with all plugin services modules and before service mapping
    *
-   * @returns {object}
+   * @return {Promise<object>}
    * @private
    */
   async _getServiceModules () {
@@ -107,7 +109,7 @@ class ServicePlugin extends Plugin {
         }
 
         if (serviceModules[serviceModule.name] !== undefined) {
-          this.mid.warn(`Service ${file.relativePath} skipped for dipplicate name !`)
+          this.mid.warn(`@midgar/service: Service ${file.relativePath} skipped for dipplicate name !`)
           continue
         }
 
@@ -144,6 +146,8 @@ class ServicePlugin extends Plugin {
    * @param {ServiceModule} serviceModule  Service module
    * @param {Object}        beforeServices Store service before index
    * @param {object}        file           Object file from importModules
+   *
+   * @return {Promise<void>}
    * @private
    */
   _proccessBeforeDef (serviceModule, beforeServices, file) {
@@ -169,6 +173,8 @@ class ServicePlugin extends Plugin {
    * @param {object} serviceModules Service modules
    * @param {object} beforeServices Before services maping
    * @param {object} invalidDependencies Contain dependencies cannot be require
+   *
+   * @return {Promise<void>}
    * @private
    */
   async _initService (name, serviceModules, beforeServices, invalidDependencies = {}) {
@@ -195,6 +201,8 @@ class ServicePlugin extends Plugin {
    * @param {object} serviceModules      Service modules
    * @param {object} beforeServices      Before services maping
    * @param {object} invalidDependencies Contain dependencies cannot be require
+   *
+   * @return {Promise<void>}
    * @private
    */
   async _initBeforeServices (name, serviceModules, beforeServices, invalidDependencies) {
@@ -223,7 +231,7 @@ class ServicePlugin extends Plugin {
    * @param {object} beforeServices      Before services maping
    * @param {object} invalidDependencies Contain dependencies cannot be require
    *
-   * @return {Array}
+   * @return {Promise<Array<Service>>}
    * @private
    */
   async _initDependenciesServices (name, serviceModules, beforeServices, invalidDependencies) {
@@ -253,10 +261,12 @@ class ServicePlugin extends Plugin {
    * @param {string}        name          Service name
    * @param {ServiceModule} serviceModule Service module
    * @param {Array}         args          Service constructor args
+   * 
+   * @return {Promise<void>}
    * @private
    */
   async _createInstance (name, serviceModule, args) {
-    this.mid.debug(`Create service instance ${name}.`)
+    this.mid.debug(`@midgar/service: Create service instance ${name}.`)
     if (typeof serviceModule.service === 'function') {
       // If the service is a class
       if (/^class\s/.test(Function.prototype.toString.call(serviceModule.service))) {
