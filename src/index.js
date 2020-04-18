@@ -42,9 +42,7 @@ class ServicePlugin extends Plugin {
     this.pm.addModuleType(this.moduleTypeKey, 'services')
 
     // Listen @midgar/midgar:afterInitPlugins event
-    this.mid.on('@midgar/midgar:afterInitPlugins', async () => {
-      await this._initServices()
-    })
+    this.mid.on('@midgar/midgar:afterInitPlugins', () => this._initServices())
   }
 
   /**
@@ -65,7 +63,7 @@ class ServicePlugin extends Plugin {
 
     for (const name in serviceModules) {
       // try {
-        await this._initService(name, serviceModules, beforeServices)
+      await this._initService(name, serviceModules, beforeServices)
       /* } catch (error) {
         this.mid.error(error)
       } */
@@ -261,7 +259,7 @@ class ServicePlugin extends Plugin {
    * @param {string}        name          Service name
    * @param {ServiceModule} serviceModule Service module
    * @param {Array}         args          Service constructor args
-   * 
+   *
    * @return {Promise<void>}
    * @private
    */
@@ -276,7 +274,7 @@ class ServicePlugin extends Plugin {
         if (typeof this.services[name].init === 'function') {
           await this.services[name].init()
         }
-      // if service is a function
+        // if service is a function
       } else {
         this.services[name] = await serviceModule.service(...args)
       }
@@ -303,7 +301,7 @@ class ServicePlugin extends Plugin {
    */
   _isClass (func) {
     return typeof func === 'function' &&
-    /^class\s/.test(Function.prototype.toString.call(func))
+      /^class\s/.test(Function.prototype.toString.call(func))
   }
 }
 
