@@ -84,8 +84,14 @@ describe('Service', function () {
   it('Dependencies', async () => {
     mid = await initMidgar()
     const dependService = mid.getService('depend')
-    expect(dependService.testService).to.be.an.instanceof(testService.service, 'testService is not an instance of TestService')
-    expect(dependService.test2Service).to.be.an.instanceof(namedService.service, 'test2Service is not an instance of NamedService')
+    expect(dependService.testService).to.be.an.instanceof(
+      testService.service,
+      'testService is not an instance of TestService'
+    )
+    expect(dependService.test2Service).to.be.an.instanceof(
+      namedService.service,
+      'test2Service is not an instance of NamedService'
+    )
 
     const services = mid.getService('test-plugin:test').services
 
@@ -96,6 +102,9 @@ describe('Service', function () {
   it('Circulare dependencies', async () => {
     mid = new Midgar()
     const configPath = 'fixtures/config-cdep'
-     await expect(mid.start(path.join(__dirname, configPath))).to.be.rejectedWith(Error, `Invalid service dependency (test-cdep-1) in service (test-cdep-2), test-cdep-2 already depend on test-cdep-1 !`)
+    await expect(mid.start(path.join(__dirname, configPath))).to.be.rejectedWith(
+      Error,
+      `Invalid service dependency test-cdep-1 in service test-cdep-2, test-cdep-1 already depend on test-cdep-2 !`
+    )
   })
 })

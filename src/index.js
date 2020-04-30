@@ -1,5 +1,5 @@
 import { Plugin } from '@midgar/midgar'
-import { asyncMap } from '@midgar/utils'
+import { timer } from '@midgar/utils'
 
 export const MODULE_TYPE_KEY = 'midgar-service'
 
@@ -16,7 +16,7 @@ export const MODULE_TYPE_KEY = 'midgar-service'
  * @class
  */
 class ServicePlugin extends Plugin {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
 
     /**
@@ -37,7 +37,7 @@ class ServicePlugin extends Plugin {
   /**
    * Init plugin
    */
-  init () {
+  init() {
     // Add service module types
     this.pm.addModuleType(this.moduleTypeKey, 'services')
 
@@ -51,24 +51,26 @@ class ServicePlugin extends Plugin {
    * @return {Promise<void>}
    * @private
    */
-  async _initServices () {
+  async _initServices() {
     this.mid.debug('@midgar/service: Load services...')
 
+    timer.start('midgar-service-load')
     // Get all plugin services
-    const { serviceModules, beforeServices } = await this._getServiceModules()
+    const serviceModules = await this._getServiceModules()
+
+    this._proccessBeforeDef(serviceModules)
     // Add getService method
     this.mid.getService = (name) => {
       return this.getService(name)
     }
 
+    const globalDependencies = {}
     for (const name in serviceModules) {
-      // try {
-      await this._initService(name, serviceModules, beforeServices)
-      /* } catch (error) {
-        this.mid.error(error)
-      } */
+      await this._initService(name, serviceModules, globalDependencies)
     }
 
+    const time = timer.getTime('midgar-service-load')
+    this.mid.debug(`@midgar:service: Services loaded in ${time} ms.`)
     /**
      * afterInit event.
      * @event @midgar/service:afterInit
@@ -82,8 +84,7 @@ class ServicePlugin extends Plugin {
    * @return {Promise<object>}
    * @private
    */
-  async _getServiceModules () {
-    const beforeServices = {}
+  async _getServiceModules() {
     const serviceModules = {}
 
     // Get service files
@@ -111,16 +112,13 @@ class ServicePlugin extends Plugin {
           continue
         }
 
-        // Check before
-        this._proccessBeforeDef(serviceModule, beforeServices, file)
-
         serviceModules[serviceModule.name] = serviceModule
       } catch (error) {
         this.mid.error(error)
       }
     }
 
-    return { serviceModules, beforeServices }
+    return serviceModules
   }
 
   /**
@@ -130,12 +128,18 @@ class ServicePlugin extends Plugin {
    * @param {ModuleFile}    file          Module file from importModules
    * @private
    */
-  _checkServiceModule (serviceModule, file) {
+  _checkServiceModule(serviceModule, file) {
     if (typeof serviceModule !== 'object') throw new TypeError(`Invalid default export type in module: ${file.path} !`)
-    if (serviceModule.name !== undefined && typeof serviceModule.name !== 'string') throw new TypeError(`Invalid name type in module: ${file.path} !`)
+    if (serviceModule.name !== undefined && typeof serviceModule.name !== 'string')
+      throw new TypeError(`Invalid name type in module: ${file.path} !`)
     if (serviceModule.service === undefined) throw new Error(`No service define in module: ${file.path} !`)
     if (typeof serviceModule.service !== 'function') throw new TypeError(`Invalid service type in module: ${file.path} !`)
-    if (serviceModule.before !== undefined && typeof serviceModule.before !== 'string' && !Array.isArray(serviceModule.before)) throw new Error(`Invalid before type in module: ${file.path} !`)
+    if (
+      serviceModule.before !== undefined &&
+      typeof serviceModule.before !== 'string' &&
+      !Array.isArray(serviceModule.before)
+    )
+      throw new Error(`Invalid before type in module: ${file.path} !`)
   }
 
   /**
@@ -148,18 +152,40 @@ class ServicePlugin extends Plugin {
    * @return {Promise<void>}
    * @private
    */
-  _proccessBeforeDef (serviceModule, beforeServices, file) {
-    if (serviceModule.before === undefined) return
-    if (typeof serviceModule.before !== 'string' && !Array.isArray(serviceModule.before)) throw new Error(`Invalid before type in file: ${file.path} !`)
+  _proccessBeforeDef(serviceModules) {
+    for (const name in serviceModules) {
+      const serviceModule = serviceModules[name]
 
-    if (typeof serviceModule.before === 'string') {
-      if (beforeServices[serviceModule.before] === undefined) beforeServices[serviceModule.before] = []
-      beforeServices[serviceModule.before].push(serviceModule.name)
-    } else {
-      for (const name of serviceModule.before) {
-        if (typeof name !== 'string') throw new Error(`Invalid before entry type in file: ${file.path} !`)
-        if (beforeServices[name] === undefined) beforeServices[name] = []
-        beforeServices[name].push(serviceModule.name)
+      if (serviceModule.before === undefined) continue
+
+      if (typeof serviceModule.before !== 'string' && !Array.isArray(serviceModule.before))
+        throw new Error(`Invalid before type in service: ${serviceModule.name} !`)
+
+      if (typeof serviceModule.before === 'string') {
+        if (serviceModules[serviceModule.before] === undefined)
+          throw new Error(`Unknow before service ${serviceModule.before} defined in ${serviceModule.name} `)
+
+        // Before service def
+        const beforeServiceModule = serviceModules[serviceModule.before]
+
+        if (beforeServiceModule.beforeDependencies === undefined) beforeServiceModule.beforeDependencies = []
+
+        // Add before dependency
+        beforeServiceModule.beforeDependencies.push(name)
+      } else {
+        for (const beforeName of serviceModule.before) {
+          if (typeof beforeName !== 'string')
+            throw new Error(`Invalid before entry type in service: ${serviceModule.name} !`)
+
+          if (serviceModules[beforeName] === undefined)
+            throw new Error(`Unknow before service ${beforeName} defined in ${serviceModule.name} `)
+
+          const beforeServiceModule = serviceModules[beforeName]
+          if (beforeServiceModule.beforeDependencies === undefined) beforeServiceModule.beforeDependencies = []
+
+          // Add before dependency
+          beforeServiceModule.beforeDependencies.push(name)
+        }
       }
     }
   }
@@ -169,22 +195,21 @@ class ServicePlugin extends Plugin {
    *
    * @param {string} name Service Service name
    * @param {object} serviceModules Service modules
-   * @param {object} beforeServices Before services maping
-   * @param {object} invalidDependencies Contain dependencies cannot be require
+   * @param {object} globalDependencies Contain dependencies trace
+   * @param {Array<String>} depends      Parent depending service
    *
    * @return {Promise<void>}
    * @private
    */
-  async _initService (name, serviceModules, beforeServices, invalidDependencies = {}) {
+  async _initService(name, serviceModules, globalDependencies, depends = []) {
     // This method can be called multiple time for same service
     if (this.services[name]) return
-    await this._initBeforeServices(name, serviceModules, beforeServices, invalidDependencies)
 
-    const args = [
-      this.mid
-    ]
+    const args = [this.mid]
 
-    const services = await this._initDependenciesServices(name, serviceModules, beforeServices, invalidDependencies)
+    // Add parent depeendency
+    depends.push(name)
+    const services = await this._initDependenciesServices(name, serviceModules, globalDependencies, depends)
     args.push(...services)
 
     if (this.services[name]) return
@@ -193,64 +218,69 @@ class ServicePlugin extends Plugin {
   }
 
   /**
-   * Init before service
-   *
-   * @param {string} name                Service Service name
-   * @param {object} serviceModules      Service modules
-   * @param {object} beforeServices      Before services maping
-   * @param {object} invalidDependencies Contain dependencies cannot be require
-   *
-   * @return {Promise<void>}
-   * @private
-   */
-  async _initBeforeServices (name, serviceModules, beforeServices, invalidDependencies) {
-    if (beforeServices[name]) {
-      // Init service async
-      await asyncMap(beforeServices[name], (beforeService) => {
-        // Check service name
-        if (serviceModules[beforeService] === name) throw new Error(`Invalid before service (${serviceModules[beforeService]}) in service (${name}) !`)
-        if (!serviceModules[beforeService]) throw new Error(`Unknow before service (${beforeService}) in service (${name}) !`)
-
-        // Flag this service to protect from circular dependency
-        invalidDependencies[beforeService] = serviceModules[name]
-
-        // Create service instance
-        return this._initService(beforeService, serviceModules, beforeServices, invalidDependencies)
-      })
-    }
-  }
-
-  /**
    * Init dependencies serices and return an array
    * with service instances
    *
    * @param {string} name                Service Service name
    * @param {object} serviceModules      Service modules dictionary
-   * @param {object} beforeServices      Before services maping
-   * @param {object} invalidDependencies Contain dependencies cannot be require
+   * @param {object} globalDependencies Contain dependencies trace
+   * @param {Array<String>} depends      Parent depending service
    *
    * @return {Promise<Array<Service>>}
    * @private
    */
-  async _initDependenciesServices (name, serviceModules, beforeServices, invalidDependencies) {
+  async _initDependenciesServices(name, serviceModules, globalDependencies, depends) {
     const serviceModule = serviceModules[name]
+
+    const depependencies = []
+
+    if (serviceModule.beforeDependencies && serviceModule.beforeDependencies.length) {
+      for (const dependency of serviceModule.beforeDependencies) {
+        // Init service async
+        if (!serviceModules[dependency]) throw new Error(`Unknow service before (${dependency}) in service (${name}) !`)
+        await this._initService(dependency, serviceModules, globalDependencies, depends)
+      }
+    }
+
     // Inject dependencies in the args
     if (serviceModule.dependencies && serviceModule.dependencies.length) {
       // Init service async
-      return asyncMap(serviceModule.dependencies, async (dependency) => {
+
+      for (const dependency of serviceModule.dependencies) {
+        // Loop on service dependencies
         if (!serviceModules[dependency]) throw new Error(`Unknow service dependency (${dependency}) in service (${name}) !`)
 
-        if (dependency === name) throw new Error(`Invalid service dependency (${dependency}) in service (${name}) !`)
-        if (dependency === name) throw new Error(`Invalid service dependency (${dependency}) in service (${name}) !`)
-        if (invalidDependencies[dependency] !== undefined) throw new Error(`Invalid service dependency (${dependency}) in service (${name}), ${invalidDependencies[dependency]} already depend on ${dependency} !`)
+        // Check if service not depend of himself
+        if (dependency === name) {
+          throw new Error(`Invalid service dependency (${dependency}) in service (${name}) !`)
+        }
 
-        invalidDependencies[name] = dependency
-        await this._initService(dependency, serviceModules, beforeServices, invalidDependencies)
-        return this.getService(dependency)
-      })
+        // Check circular dependencies
+        if (globalDependencies[dependency] !== undefined && globalDependencies[dependency].indexOf(name) !== -1) {
+          throw new Error(
+            `Invalid service dependency ${dependency} in service ${name}, ${dependency} already depend on ${name} !`
+          )
+        }
+
+        // Trace dependency to check circular dependencies
+        if (globalDependencies[name] === undefined) globalDependencies[name] = []
+        if (globalDependencies[name].indexOf(dependency) === -1) {
+          globalDependencies[name].push(dependency)
+        }
+
+        for (const dep of depends) {
+          if (globalDependencies[dep] === undefined) globalDependencies[dep] = []
+          if (globalDependencies[dep].indexOf(dependency) === -1) {
+            globalDependencies[dep].push(dependency)
+          }
+        }
+
+        await this._initService(dependency, serviceModules, globalDependencies, [...depends])
+        depependencies.push(this.getService(dependency))
+      }
     }
 
-    return []
+    return depependencies
   }
 
   /**
@@ -263,8 +293,8 @@ class ServicePlugin extends Plugin {
    * @return {Promise<void>}
    * @private
    */
-  async _createInstance (name, serviceModule, args) {
-    this.mid.debug(`@midgar/service: Create service instance ${name}.`)
+  async _createInstance(name, serviceModule, args) {
+    timer.start('midgar-service-' + name + '-init')
     if (typeof serviceModule.service === 'function') {
       // If the service is a class
       if (/^class\s/.test(Function.prototype.toString.call(serviceModule.service))) {
@@ -281,6 +311,9 @@ class ServicePlugin extends Plugin {
     } else {
       throw new Error(`Invvalid service type: ${name} !`)
     }
+
+    const time = timer.getTime('midgar-service-' + name + '-init')
+    this.mid.debug(`@midgar/service: Create service instance ${name} in ${time} ms.`)
   }
 
   /**
@@ -289,19 +322,9 @@ class ServicePlugin extends Plugin {
    * @param {string} name Service name
    * @returns {object}
    */
-  getService (name) {
+  getService(name) {
     if (!this.services[name]) throw new Error(`Unknow service: ${name} !`)
     return this.services[name]
-  }
-
-  /**
-   * Test if func is a class
-   * @param {Any} func Arg to test
-   * @private
-   */
-  _isClass (func) {
-    return typeof func === 'function' &&
-      /^class\s/.test(Function.prototype.toString.call(func))
   }
 }
 
